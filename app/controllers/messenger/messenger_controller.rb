@@ -1,12 +1,12 @@
 module Messenger
   class MessengerController < ActionController::Base
     def validate
-      if verify_token_valid? && access_token_valid?
+      if verify_token_valid? && verify_mode?
         render json: params["hub.challenge"]
       elsif !verify_token_valid?
         render json: 'Invalid verify token'
       else
-        render json: 'Invalid page access token'
+        render json: 'Invalid mode'
       end
     end
 
@@ -34,6 +34,10 @@ module Messenger
 
     def verify_token_valid?
       params["hub.verify_token"] == Messenger.config.verify_token
+    end
+
+    def verify_mode?
+      params["hub.mode"] == "subscribe"
     end
 
     def fb_params
